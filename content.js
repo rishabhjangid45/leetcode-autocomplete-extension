@@ -9,5 +9,7 @@ function injectScript(file) {
 injectScript("suggestions/cpp.js");
 injectScript("suggestions/python.js");
 injectScript("suggestions/java.js");
+injectScript("suggestions/methods.js");
 injectScript("suggestions/engine.js");
+injectScript("suggestions/variableTracker.js");
 injectScript("inject.js");

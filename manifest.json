@@ -19,7 +19,10 @@
         "suggestions/cpp.js",
         "suggestions/python.js",
         "suggestions/java.js",
-        "suggestions/engine.js"
+        "suggestions/engine.js",
+        "suggestions/methods.js",
+        "suggestions/variableTracker.js"
+
       ],
       "matches": ["https://leetcode.com/*"]
     }

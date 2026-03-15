@@ -28,26 +28,28 @@ function registerProvider() {
 
   monaco.languages.registerCompletionItemProvider("*", {
 
-    provideCompletionItems(model, position) {
+  triggerCharacters: ["."],
 
-      const language = model.getLanguageId();
+  provideCompletionItems(model, position) {
+    updateVariableTypes(model);
+    const language = model.getLanguageId();
 
-      const word = model.getWordUntilPosition(position);
+    const word = model.getWordUntilPosition(position);
 
-      const range = {
-        startLineNumber: position.lineNumber,
-        endLineNumber: position.lineNumber,
-        startColumn: word.startColumn,
-        endColumn: word.endColumn
-      };
+    const range = {
+      startLineNumber: position.lineNumber,
+      endLineNumber: position.lineNumber,
+      startColumn: word.startColumn,
+      endColumn: word.endColumn
+    };
+    
+    const suggestions = getSuggestions(range, model, position, language);
 
-      const suggestions = getSuggestions(range, model, position, language);
+    return { suggestions };
 
-      return { suggestions };
+  }
 
-    }
-
-  });
+});
 
 }
 

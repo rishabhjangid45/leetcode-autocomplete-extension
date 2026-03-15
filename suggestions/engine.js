@@ -64,6 +64,12 @@ function getSuggestions(range, model, position, language) {
 
   let suggestions = [];
 
+  const object = detectDotContext(model, position);
+
+    if (object) {
+  return getMethodSuggestions(object, range, lang);
+    }
+
   if (lang === "cpp" || lang === "c++") {
 
     suggestions = [
@@ -101,5 +107,99 @@ function getSuggestions(range, model, position, language) {
   }
 
   return rankSuggestions(suggestions, prefix);
+
+}
+
+function detectDotContext(model, position) {
+
+  const line = model.getLineContent(position.lineNumber);
+
+  const left = line.substring(0, position.column - 1);
+
+  const match = left.match(/([a-zA-Z_][a-zA-Z0-9_]*)\.$/);
+
+  if (!match) return null;
+
+  return match[1].toLowerCase();
+}
+
+function getMethodSuggestions(object, range, language) {
+
+object = object.trim().toLowerCase();
+
+let detectedType = null;
+let methods = [];
+
+/* -------- VARIABLE TRACKER -------- */
+
+if (window.variableTypes && window.variableTypes[object]) {
+detectedType = window.variableTypes[object];
+}
+
+/* -------- FALLBACK HEURISTICS -------- */
+
+if (!detectedType) {
+
+if (language === "cpp" || language === "c++") {
+
+for (const type in window.cppMethods) {
+if (object === type || object.includes(type)) {
+detectedType = type;
+break;
+}
+}
+
+}
+
+if (language.includes("python")) {
+
+for (const type in window.pythonMethods) {
+if (object === type || object.includes(type)) {
+detectedType = type;
+break;
+}
+}
+
+}
+
+if (language === "java") {
+
+for (const type in window.javaMethods) {
+if (object === type || object.includes(type)) {
+detectedType = type;
+break;
+}
+}
+
+}
+
+}
+
+/* -------- RESOLVE METHODS -------- */
+
+if (detectedType) {
+
+if (language === "cpp" || language === "c++") {
+methods = window.cppMethods[detectedType] || [];
+}
+
+if (language.includes("python")) {
+methods = window.pythonMethods[detectedType] || [];
+}
+
+if (language === "java") {
+methods = window.javaMethods[detectedType] || [];
+}
+
+}
+
+/* -------- RETURN MONACO SUGGESTIONS -------- */
+
+return methods.map(m => ({
+label: m,
+insertText: m + "()",
+kind: monaco.languages.CompletionItemKind.Method,
+range
+}));
 
 }
