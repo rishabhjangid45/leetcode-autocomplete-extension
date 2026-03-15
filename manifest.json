@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "LeetCode IntelliSense",
+  "version": "1.0.0",
+  "description": "Autocomplete snippets for the LeetCode editor",
+  "permissions": ["scripting"],
+  "host_permissions": ["https://leetcode.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/problems/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "inject.js",
+        "suggestions/cpp.js",
+        "suggestions/python.js",
+        "suggestions/java.js",
+        "suggestions/engine.js"
+      ],
+      "matches": ["https://leetcode.com/*"]
+    }
+  ]
+}
