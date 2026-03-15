@@ -24,39 +24,45 @@ function initExtension() {
 }
 
 
+/* -------- COMPLETION PROVIDER -------- */
+
 function registerProvider() {
 
   monaco.languages.registerCompletionItemProvider("*", {
 
-  triggerCharacters: ["."],
+    triggerCharacters: ["."],
 
-  provideCompletionItems(model, position) {
-    updateVariableTypes(model);
-    const language = model.getLanguageId();
+    provideCompletionItems(model, position) {
 
-    const word = model.getWordUntilPosition(position);
+      updateVariableTypes(model);
 
-    const range = {
-      startLineNumber: position.lineNumber,
-      endLineNumber: position.lineNumber,
-      startColumn: word.startColumn,
-      endColumn: word.endColumn
-    };
-    
-    const suggestions = getSuggestions(range, model, position, language);
+      const language = model.getLanguageId();
 
-    return { suggestions };
+      const word = model.getWordUntilPosition(position);
 
-  }
+      const range = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn
+      };
 
-});
+      const suggestions = getSuggestions(range, model, position, language);
+
+      return { suggestions };
+
+    }
+
+  });
 
 }
 
 
+/* -------- ENABLE AUTO SUGGESTIONS -------- */
+
 function enableSuggestions() {
 
-  const editors = monaco.editor.getEditors()
+  const editors = monaco.editor.getEditors();
 
   editors.forEach(editor => {
 
@@ -67,8 +73,8 @@ function enableSuggestions() {
         strings: false
       },
       suggestOnTriggerCharacters: true
-    })
+    });
 
-  })
+  });
 
 }

@@ -1,0 +1,285 @@
+window.algorithmTemplates = {
+
+/* ---------------- C++ ---------------- */
+
+cpp: [
+
+{
+label: "bfs",
+insertText:
+`queue<int> q;
+vector<bool> visited(n,false);
+
+q.push(\${1:start});
+visited[\${1:start}] = true;
+
+while(!q.empty()){
+    int node = q.front();
+    q.pop();
+
+    for(auto next : adj[node]){
+        if(!visited[next]){
+            visited[next] = true;
+            q.push(next);
+        }
+    }
+}`
+},
+
+{
+label: "dfs",
+insertText:
+`void dfs(int node){
+    visited[node] = true;
+
+    for(auto next : adj[node]){
+        if(!visited[next]){
+            dfs(next);
+        }
+    }
+}`
+},
+
+{
+label: "binarysearch",
+insertText:
+`int l = 0, r = n-1;
+
+while(l <= r){
+    int mid = l + (r-l)/2;
+
+    if(arr[mid] == target){
+        return mid;
+    }
+
+    if(arr[mid] < target){
+        l = mid + 1;
+    } else {
+        r = mid - 1;
+    }
+}`
+},
+
+{
+label: "slidingwindow",
+insertText:
+`int l = 0;
+int sum = 0;
+
+for(int r = 0; r < n; r++){
+
+    sum += arr[r];
+
+    while(sum > target){
+        sum -= arr[l];
+        l++;
+    }
+
+}`
+},
+
+{
+label: "twopointers",
+insertText:
+`int l = 0, r = n-1;
+
+while(l < r){
+
+    if(condition){
+        l++;
+    } else {
+        r--;
+    }
+
+}`
+}
+
+],
+
+
+/* ---------------- PYTHON ---------------- */
+
+python: [
+
+{
+label: "bfs",
+insertText:
+`from collections import deque
+
+q = deque([\${1:start}])
+visited = set([\${1:start}])
+
+while q:
+    node = q.popleft()
+
+    for nxt in adj[node]:
+        if nxt not in visited:
+            visited.add(nxt)
+            q.append(nxt)`
+},
+
+{
+label: "dfs",
+insertText:
+`def dfs(node):
+    visited.add(node)
+
+    for nxt in adj[node]:
+        if nxt not in visited:
+            dfs(nxt)`
+},
+
+{
+label: "binarysearch",
+insertText:
+`l, r = 0, len(arr) - 1
+
+while l <= r:
+    mid = (l + r) // 2
+
+    if arr[mid] == target:
+        return mid
+
+    if arr[mid] < target:
+        l = mid + 1
+    else:
+        r = mid - 1`
+},
+
+{
+label: "slidingwindow",
+insertText:
+`l = 0
+curr_sum = 0
+
+for r in range(len(arr)):
+
+    curr_sum += arr[r]
+
+    while curr_sum > target:
+        curr_sum -= arr[l]
+        l += 1`
+},
+
+{
+label: "twopointers",
+insertText:
+`l, r = 0, len(arr) - 1
+
+while l < r:
+
+    if condition:
+        l += 1
+    else:
+        r -= 1`
+}
+
+],
+
+
+/* ---------------- JAVA ---------------- */
+
+java: [
+
+{
+label: "bfs",
+insertText:
+`Queue<Integer> q = new LinkedList<>();
+boolean[] visited = new boolean[n];
+
+q.add(\${1:start});
+visited[\${1:start}] = true;
+
+while(!q.isEmpty()){
+
+    int node = q.poll();
+
+    for(int next : adj.get(node)){
+
+        if(!visited[next]){
+            visited[next] = true;
+            q.add(next);
+        }
+
+    }
+
+}`
+},
+
+{
+label: "dfs",
+insertText:
+`void dfs(int node){
+
+    visited[node] = true;
+
+    for(int next : adj.get(node)){
+
+        if(!visited[next]){
+            dfs(next);
+        }
+
+    }
+
+}`
+},
+
+{
+label: "binarysearch",
+insertText:
+`int l = 0, r = arr.length - 1;
+
+while(l <= r){
+
+    int mid = l + (r - l)/2;
+
+    if(arr[mid] == target){
+        return mid;
+    }
+
+    if(arr[mid] < target){
+        l = mid + 1;
+    } else {
+        r = mid - 1;
+    }
+
+}`
+},
+
+{
+label: "slidingwindow",
+insertText:
+`int l = 0;
+int sum = 0;
+
+for(int r = 0; r < arr.length; r++){
+
+    sum += arr[r];
+
+    while(sum > target){
+        sum -= arr[l];
+        l++;
+    }
+
+}`
+},
+
+{
+label: "twopointers",
+insertText:
+`int l = 0, r = arr.length - 1;
+
+while(l < r){
+
+    if(condition){
+        l++;
+    } else {
+        r--;
+    }
+
+}`
+}
+
+]
+
+};
