@@ -62,6 +62,11 @@ function getSuggestions(range, model, position, language) {
 
     const wordInfo = model.getWordUntilPosition(position);
     const prefix = wordInfo.word;
+    const line = model.getLineContent(position.lineNumber).trim();
+
+    if (line.startsWith("//") || line.startsWith("#")) {
+        return [];
+    }
 
     const lang = language.toLowerCase();
 
@@ -84,14 +89,16 @@ function getSuggestions(range, model, position, language) {
             templates = window.algorithmTemplates.java || [];
         }
 
-        const templateSuggestions = templates.map(t => ({
-            label: t.label,
-            insertText: t.insertText,
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertTextRules:
-                monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            range
-        }));
+        const templateSuggestions = templates
+            .filter(t => t.label.startsWith(prefix))
+            .map(t => ({
+                label: t.label,
+                insertText: t.insertText,
+                kind: monaco.languages.CompletionItemKind.Snippet,
+                insertTextRules:
+                    monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                range
+            }));
 
         suggestions.push(...templateSuggestions);
 
@@ -128,7 +135,7 @@ function getSuggestions(range, model, position, language) {
 
     /* -------- FILTER + SORT -------- */
 
-    return rankSuggestions(suggestions, prefix);
+    return rankSuggestions(removeDuplicates(suggestions), prefix);
 
 }
 
@@ -223,5 +230,20 @@ function getMethodSuggestions(object, range, language) {
         kind: monaco.languages.CompletionItemKind.Method,
         range
     }));
+
+}
+
+function removeDuplicates(list) {
+
+    const seen = new Set();
+
+    return list.filter(item => {
+
+        if (seen.has(item.label)) return false;
+
+        seen.add(item.label);
+        return true;
+
+    });
 
 }

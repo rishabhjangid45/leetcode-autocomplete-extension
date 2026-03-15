@@ -6,6 +6,8 @@ cpp: [
 
 {
 label: "bfs",
+details: "Breadth-First Search",
+
 insertText:
 `queue<int> q;
 vector<bool> visited(n,false);
@@ -28,6 +30,7 @@ while(!q.empty()){
 
 {
 label: "dfs",
+details: "Depth-First Search",
 insertText:
 `void dfs(int node){
     visited[node] = true;
@@ -42,6 +45,7 @@ insertText:
 
 {
 label: "binarysearch",
+details: "Binary Search",
 insertText:
 `int l = 0, r = n-1;
 
@@ -62,6 +66,7 @@ while(l <= r){
 
 {
 label: "slidingwindow",
+details: "Sliding Window",
 insertText:
 `int l = 0;
 int sum = 0;
@@ -80,6 +85,7 @@ for(int r = 0; r < n; r++){
 
 {
 label: "twopointers",
+details: "Two Pointers",
 insertText:
 `int l = 0, r = n-1;
 
@@ -103,6 +109,7 @@ python: [
 
 {
 label: "bfs",
+details: "Breadth-First Search",
 insertText:
 `from collections import deque
 
@@ -120,6 +127,7 @@ while q:
 
 {
 label: "dfs",
+details: "Depth-First Search",
 insertText:
 `def dfs(node):
     visited.add(node)
@@ -131,6 +139,7 @@ insertText:
 
 {
 label: "binarysearch",
+details: "Binary Search",
 insertText:
 `l, r = 0, len(arr) - 1
 
@@ -148,6 +157,7 @@ while l <= r:
 
 {
 label: "slidingwindow",
+details: "Sliding Window",
 insertText:
 `l = 0
 curr_sum = 0
@@ -163,6 +173,7 @@ for r in range(len(arr)):
 
 {
 label: "twopointers",
+details: "Two Pointers",
 insertText:
 `l, r = 0, len(arr) - 1
 
@@ -183,6 +194,7 @@ java: [
 
 {
 label: "bfs",
+details: "Breadth-First Search",
 insertText:
 `Queue<Integer> q = new LinkedList<>();
 boolean[] visited = new boolean[n];
@@ -208,6 +220,7 @@ while(!q.isEmpty()){
 
 {
 label: "dfs",
+details: "Depth-First Search",  
 insertText:
 `void dfs(int node){
 
@@ -226,6 +239,7 @@ insertText:
 
 {
 label: "binarysearch",
+details: "Binary Search",
 insertText:
 `int l = 0, r = arr.length - 1;
 
@@ -248,6 +262,7 @@ while(l <= r){
 
 {
 label: "slidingwindow",
+details: "Sliding Window",
 insertText:
 `int l = 0;
 int sum = 0;
@@ -266,6 +281,7 @@ for(int r = 0; r < arr.length; r++){
 
 {
 label: "twopointers",
+details: "Two Pointers",
 insertText:
 `int l = 0, r = arr.length - 1;
 

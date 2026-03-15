@@ -1,13 +1,13 @@
 function waitForMonaco(callback) {
 
-  const interval = setInterval(() => {
+    const interval = setInterval(() => {
 
-    if (window.monaco && monaco.editor.getModels().length > 0) {
-      clearInterval(interval)
-      callback()
-    }
+        if (window.monaco && monaco.editor.getModels().length > 0) {
+            clearInterval(interval)
+            callback()
+        }
 
-  }, 500)
+    }, 500)
 
 }
 
@@ -16,10 +16,10 @@ waitForMonaco(initExtension)
 
 function initExtension() {
 
-  console.log("LeetCode IntelliSense initialized");
+    console.log("LeetCode IntelliSense initialized");
 
-  registerProvider();
-  enableSuggestions();
+    registerProvider();
+    enableSuggestions();
 
 }
 
@@ -28,32 +28,38 @@ function initExtension() {
 
 function registerProvider() {
 
-  monaco.languages.registerCompletionItemProvider("*", {
+    monaco.languages.registerCompletionItemProvider("*", {
 
-    triggerCharacters: ["."],
+        triggerCharacters: ["."],
 
-    provideCompletionItems(model, position) {
+        provideCompletionItems(model, position) {
 
-      updateVariableTypes(model);
+            const triggerChars = [";", "=", "{", "}"];
 
-      const language = model.getLanguageId();
+            const line = model.getLineContent(position.lineNumber);
 
-      const word = model.getWordUntilPosition(position);
+            if (triggerChars.some(c => line.includes(c))) {
+                updateVariableTypes(model);
+            }
 
-      const range = {
-        startLineNumber: position.lineNumber,
-        endLineNumber: position.lineNumber,
-        startColumn: word.startColumn,
-        endColumn: word.endColumn
-      };
+            const language = model.getLanguageId();
 
-      const suggestions = getSuggestions(range, model, position, language);
+            const word = model.getWordUntilPosition(position);
 
-      return { suggestions };
+            const range = {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: word.startColumn,
+                endColumn: word.endColumn
+            };
 
-    }
+            const suggestions = getSuggestions(range, model, position, language);
 
-  });
+            return { suggestions };
+
+        }
+
+    });
 
 }
 
@@ -62,19 +68,19 @@ function registerProvider() {
 
 function enableSuggestions() {
 
-  const editors = monaco.editor.getEditors();
+    const editors = monaco.editor.getEditors();
 
-  editors.forEach(editor => {
+    editors.forEach(editor => {
 
-    editor.updateOptions({
-      quickSuggestions: {
-        other: true,
-        comments: false,
-        strings: false
-      },
-      suggestOnTriggerCharacters: true
+        editor.updateOptions({
+            quickSuggestions: {
+                other: true,
+                comments: false,
+                strings: false
+            },
+            suggestOnTriggerCharacters: true
+        });
+
     });
-
-  });
 
 }
