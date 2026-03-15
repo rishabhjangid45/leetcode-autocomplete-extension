@@ -53,7 +53,20 @@ function registerProvider() {
                 endColumn: word.endColumn
             };
 
-            const suggestions = getSuggestions(range, model, position, language);
+            // Check if we're after a dot (method call context)
+            const dotContext = detectDotContext(model, position);
+            
+            let suggestions = [];
+            
+            if (dotContext) {
+                // User typed: variable.
+                // Update variable types before getting methods
+                updateVariableTypes(model);
+                suggestions = getMethodSuggestions(dotContext, range, language);
+            } else {
+                // User typing: keyword or snippet
+                suggestions = getSuggestions(range, model, position, language);
+            }
 
             return { suggestions };
 

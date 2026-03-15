@@ -1,9 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "LeetCode IntelliSense",
+  "name": "Leet Assist",
   "version": "1.0.0",
   "description": "Autocomplete snippets for the LeetCode editor",
   "permissions": ["scripting"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "author": "Rishabh",
+  "homepage_url": "https://github.com/rishabhjangid45/leetcode-autocomplete-extension",
   "host_permissions": ["https://leetcode.com/*"],
   "content_scripts": [
     {

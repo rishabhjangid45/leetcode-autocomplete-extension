@@ -299,3 +299,69 @@ while(l < r){
 ]
 
 };
+window.cppSnippets = [
+    {
+        label: "fori",
+        insertText: `for(int i = 0; i < \${1:n}; i++){
+    \${2}
+}`
+    },
+
+    {
+        label: "forj",
+        insertText: `for(int j = 0; j < \${1:n}; j++){
+    \${2}
+}`
+    },
+
+    {
+        label: "vector",
+        insertText: "vector<int>"
+    },
+    {
+        label: "stack",
+        insertText: "stack<int>"
+    },
+    {
+        label: "queue",
+        insertText: "queue<int>"
+    },
+    {
+        label: "map",
+        insertText: "map<int,int>"
+    },
+
+
+    {
+        label: "pq",
+        insertText: "priority_queue<int>"
+    },
+
+    {
+        label: "pair",
+        insertText: "pair<int,int>"
+    },
+
+    {
+        label: "fastio",
+        insertText: `ios::sync_with_stdio(false);
+cin.tie(NULL);`
+    },
+
+    {
+        label: "ifelse",
+        insertText: `if(\${1:condition}){
+
+}else{
+
+}`
+    },
+
+    {
+        label: "main",
+        insertText: `int main(){
+    \${1}
+    return 0;
+}`
+    }
+];

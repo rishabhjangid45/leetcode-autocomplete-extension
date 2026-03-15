@@ -11,26 +11,26 @@ for (const line of lines) {
 
 let match;
 
-/* -------- C++ Containers -------- */
+/* -------- C++ TYPES -------- */
 
 // vector
-match = line.match(/vector<.*>\s+(\w+)/);
+match = line.match(/vector<[^>]+>\s+(\w+)/);
 if (match) map[match[1]] = "vector";
 
 // map
-match = line.match(/map<.*>\s+(\w+)/);
+match = line.match(/map<[^>]+>\s+(\w+)/);
 if (match) map[match[1]] = "map";
 
 // set
-match = line.match(/set<.*>\s+(\w+)/);
+match = line.match(/set<[^>]+>\s+(\w+)/);
 if (match) map[match[1]] = "set";
 
 // queue
-match = line.match(/queue<.*>\s+(\w+)/);
+match = line.match(/queue<[^>]+>\s+(\w+)/);
 if (match) map[match[1]] = "queue";
 
 // stack
-match = line.match(/stack<.*>\s+(\w+)/);
+match = line.match(/stack<[^>]+>\s+(\w+)/);
 if (match) map[match[1]] = "stack";
 
 // string
@@ -38,10 +38,14 @@ match = line.match(/string\s+(\w+)/);
 if (match) map[match[1]] = "string";
 
 
-/* -------- Python Types -------- */
+/* -------- PYTHON TYPES -------- */
 
 // list
 match = line.match(/(\w+)\s*=\s*\[/);
+if (match) map[match[1]] = "list";
+
+// list()
+match = line.match(/(\w+)\s*=\s*list\(/);
 if (match) map[match[1]] = "list";
 
 // dict
@@ -57,14 +61,14 @@ match = line.match(/(\w+)\s*=\s*["']/);
 if (match) map[match[1]] = "str";
 
 
-/* -------- Java Types -------- */
+/* -------- JAVA TYPES -------- */
 
 // ArrayList
-match = line.match(/ArrayList<.*>\s+(\w+)/);
+match = line.match(/ArrayList<[^>]+>\s+(\w+)/);
 if (match) map[match[1]] = "arraylist";
 
 // HashMap
-match = line.match(/HashMap<.*>\s+(\w+)/);
+match = line.match(/HashMap<[^>]+>\s+(\w+)/);
 if (match) map[match[1]] = "hashmap";
 
 // String

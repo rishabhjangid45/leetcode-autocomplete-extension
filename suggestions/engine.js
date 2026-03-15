@@ -135,7 +135,7 @@ function getSuggestions(range, model, position, language) {
 
     /* -------- FILTER + SORT -------- */
 
-    return rankSuggestions(removeDuplicates(suggestions), prefix);
+    return removeDuplicates(rankSuggestions(suggestions, prefix));
 
 }
 
@@ -154,96 +154,70 @@ function detectDotContext(model, position) {
 
 function getMethodSuggestions(object, range, language) {
 
-    object = object.trim().toLowerCase();
+object = object.trim().toLowerCase();
 
-    let detectedType = null;
-    let methods = [];
+let detectedType = null;
+let methods = [];
 
-    /* -------- VARIABLE TRACKER -------- */
+/* -------- VARIABLE TYPE -------- */
 
-    if (window.variableTypes && window.variableTypes[object]) {
-        detectedType = window.variableTypes[object];
-    }
+if (window.variableTypes && window.variableTypes[object]) {
+detectedType = window.variableTypes[object];
+}
 
-    /* -------- FALLBACK HEURISTICS -------- */
+/* -------- METHOD LOOKUP -------- */
 
-    if (!detectedType) {
+if (detectedType) {
 
-        if (language === "cpp" || language === "c++") {
+if (language === "cpp" || language === "c++") {
+methods = window.cppMethods[detectedType] || [];
+}
 
-            for (const type in window.cppMethods) {
-                if (object === type || object.includes(type)) {
-                    detectedType = type;
-                    break;
-                }
-            }
+else if (language.includes("python")) {
+methods = window.pythonMethods[detectedType] || [];
+}
 
-        }
+else if (language === "java") {
+methods = window.javaMethods[detectedType] || [];
+}
 
-        if (language.includes("python")) {
+}
 
-            for (const type in window.pythonMethods) {
-                if (object === type || object.includes(type)) {
-                    detectedType = type;
-                    break;
-                }
-            }
+// /* -------- DEBUG (TEMPORARY) -------- */
+// console.log("Tracked variables:", map);
+// console.log("Object:", object);
+// console.log("Detected type:", detectedType);
+// console.log("Methods:", methods);
 
-        }
+/* -------- RETURN SUGGESTIONS -------- */
 
-        if (language === "java") {
-
-            for (const type in window.javaMethods) {
-                if (object === type || object.includes(type)) {
-                    detectedType = type;
-                    break;
-                }
-            }
-
-        }
-
-    }
-
-    /* -------- RESOLVE METHODS -------- */
-
-    if (detectedType) {
-
-        if (language === "cpp" || language === "c++") {
-            methods = window.cppMethods[detectedType] || [];
-        }
-
-        if (language.includes("python")) {
-            methods = window.pythonMethods[detectedType] || [];
-        }
-
-        if (language === "java") {
-            methods = window.javaMethods[detectedType] || [];
-        }
-
-    }
-
-    /* -------- RETURN MONACO SUGGESTIONS -------- */
-
-    return methods.map(m => ({
-        label: m,
-        insertText: m + "()",
-        kind: monaco.languages.CompletionItemKind.Method,
-        range
-    }));
+return methods.map(m => ({
+label: m,
+insertText: m + "()",
+kind: monaco.languages.CompletionItemKind.Method,
+range
+}));
 
 }
 
 function removeDuplicates(list) {
 
-    const seen = new Set();
+    const seen = new Map(); // label -> item
 
-    return list.filter(item => {
-
-        if (seen.has(item.label)) return false;
-
-        seen.add(item.label);
-        return true;
-
-    });
+    for (const item of list) {
+        const existing = seen.get(item.label);
+        
+        if (!existing) {
+            seen.set(item.label, item);
+        } else {
+            // Prefer snippets over keywords
+            if (item.kind === monaco.languages.CompletionItemKind.Snippet &&
+                existing.kind !== monaco.languages.CompletionItemKind.Snippet) {
+                seen.set(item.label, item);
+            }
+        }
+    }
+    
+    return Array.from(seen.values());
 
 }
