@@ -1,16 +1,14 @@
-function createSuggestions(list, range, type) {
+function createSuggestions(list, range) {
 
   return list.map(item => {
 
     if (typeof item === "string") {
-
       return {
         label: item,
         insertText: item,
         kind: monaco.languages.CompletionItemKind.Keyword,
         range
       };
-
     }
 
     return {
@@ -26,15 +24,36 @@ function createSuggestions(list, range, type) {
 
 }
 
-function filterSuggestions(list, prefix) {
+
+function rankSuggestions(list, prefix) {
 
   if (!prefix) return list;
 
-  return list.filter(s =>
-    s.label.toLowerCase().startsWith(prefix.toLowerCase())
-  );
+  const p = prefix.toLowerCase();
+
+  return list
+    .filter(s => s.label.toLowerCase().includes(p))
+    .sort((a, b) => {
+
+      const aStarts = a.label.toLowerCase().startsWith(p);
+      const bStarts = b.label.toLowerCase().startsWith(p);
+
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+
+      if (a.kind === monaco.languages.CompletionItemKind.Snippet &&
+          b.kind !== monaco.languages.CompletionItemKind.Snippet)
+        return -1;
+
+      if (b.kind === monaco.languages.CompletionItemKind.Snippet &&
+          a.kind !== monaco.languages.CompletionItemKind.Snippet)
+        return 1;
+
+      return a.label.length - b.label.length;
+    });
 
 }
+
 
 function getSuggestions(range, model, position, language) {
 
@@ -72,6 +91,15 @@ function getSuggestions(range, model, position, language) {
 
   }
 
-  return filterSuggestions(suggestions, prefix);
+  if (lang === "css") {
+
+    suggestions = [
+      ...createSuggestions(window.cssKeywords, range),
+      ...createSuggestions(window.cssSnippets, range)
+    ];
+
+  }
+
+  return rankSuggestions(suggestions, prefix);
 
 }
