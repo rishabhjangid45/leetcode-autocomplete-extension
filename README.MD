@@ -160,7 +160,7 @@ The extension recognizes that `nums` is a vector and shows relevant methods.
 Clone or download the repository.
 
 ```
-git clone https://github.com/rishabhjangid45/leetcode-autocomplete-extension.git
+git clone https://github.com/rishabhjangid45/leet-assist.git
 ```
 
 Or download the ZIP and extract it.
