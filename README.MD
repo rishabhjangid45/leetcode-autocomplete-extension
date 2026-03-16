@@ -1,3 +1,7 @@
+## Demo
+
+![Project Demo](assets/codesnippets.gif)
+![Peoject Demo](assets/methodsuggestions.gif)
 # LeetCode IntelliSense Extension
 
 A Chrome extension that enhances the LeetCode coding editor with intelligent autocomplete suggestions, algorithm templates, and useful snippets for **C++, Python, and Java**.
@@ -11,6 +15,8 @@ The extension adds lightweight IntelliSense to the Monaco editor used by LeetCod
 ## 1. Keyword Autocomplete
 
 Automatically suggests language keywords while typing.
+
+
 
 Example:
 
