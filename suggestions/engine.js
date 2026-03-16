@@ -41,9 +41,11 @@ function rankSuggestions(list, prefix) {
             const aStarts = a.label.toLowerCase().startsWith(p);
             const bStarts = b.label.toLowerCase().startsWith(p);
 
+            // Priority 1: Exact prefix match
             if (aStarts && !bStarts) return -1;
             if (!aStarts && bStarts) return 1;
 
+            // Priority 2: Snippets (includes templates and boilerplate)
             if (a.kind === monaco.languages.CompletionItemKind.Snippet &&
                 b.kind !== monaco.languages.CompletionItemKind.Snippet)
                 return -1;
@@ -52,6 +54,16 @@ function rankSuggestions(list, prefix) {
                 a.kind !== monaco.languages.CompletionItemKind.Snippet)
                 return 1;
 
+            // Priority 3: Methods over keywords
+            if (a.kind === monaco.languages.CompletionItemKind.Method &&
+                b.kind !== monaco.languages.CompletionItemKind.Method)
+                return -1;
+
+            if (b.kind === monaco.languages.CompletionItemKind.Method &&
+                a.kind !== monaco.languages.CompletionItemKind.Method)
+                return 1;
+
+            // Priority 4: Shorter labels (less typing needed)
             return a.label.length - b.label.length;
         });
 
@@ -74,7 +86,7 @@ function getSuggestions(range, model, position, language) {
 
     /* -------- ALGORITHM TEMPLATES -------- */
 
-    if (window.algorithmTemplates) {
+    if (window.algorithmTemplates && prefix.length >= 2) {
 
         let templates = [];
 
@@ -90,7 +102,7 @@ function getSuggestions(range, model, position, language) {
         }
 
         const templateSuggestions = templates
-            .filter(t => t.label.startsWith(prefix))
+            .filter(t => t.label.toLowerCase().startsWith(prefix.toLowerCase()))
             .map(t => ({
                 label: t.label,
                 insertText: t.insertText,
@@ -143,7 +155,22 @@ function detectDotContext(model, position) {
 
     const line = model.getLineContent(position.lineNumber);
 
+    // Don't suggest methods in comments
+    if (line.trim().startsWith("//") || line.trim().startsWith("#")) {
+        return null;
+    }
+
     const left = line.substring(0, position.column - 1);
+
+    // Check if we're inside a string (odd number of quotes = inside string)
+    const doubleQuotes = (left.match(/"/g) || []).length;
+    const singleQuotes = (left.match(/'/g) || []).length;
+    const backticks = (left.match(/`/g) || []).length;
+
+    // If inside any type of string, don't suggest methods
+    if (doubleQuotes % 2 !== 0 || singleQuotes % 2 !== 0 || backticks % 2 !== 0) {
+        return null;
+    }
 
     const match = left.match(/([a-zA-Z_][a-zA-Z0-9_]*)\.$/);
 
@@ -154,49 +181,45 @@ function detectDotContext(model, position) {
 
 function getMethodSuggestions(object, range, language) {
 
-object = object.trim().toLowerCase();
+    object = object.trim().toLowerCase();
 
-let detectedType = null;
-let methods = [];
+    let detectedType = null;
+    let methods = [];
 
-/* -------- VARIABLE TYPE -------- */
+    /* -------- VARIABLE TYPE -------- */
 
-if (window.variableTypes && window.variableTypes[object]) {
-detectedType = window.variableTypes[object];
-}
+    if (window.variableTypes && window.variableTypes[object]) {
+        detectedType = window.variableTypes[object];
+    }
 
-/* -------- METHOD LOOKUP -------- */
+    /* -------- METHOD LOOKUP -------- */
 
-if (detectedType) {
+    if (detectedType) {
+        if (language === "cpp" || language === "c++") {
+            methods = window.cppMethods[detectedType] || [];
+        }
+        else if (language.includes("python")) {
+            methods = window.pythonMethods[detectedType] || [];
+        }
+        else if (language === "java") {
+            methods = window.javaMethods[detectedType] || [];
+        }
+    }
 
-if (language === "cpp" || language === "c++") {
-methods = window.cppMethods[detectedType] || [];
-}
-
-else if (language.includes("python")) {
-methods = window.pythonMethods[detectedType] || [];
-}
-
-else if (language === "java") {
-methods = window.javaMethods[detectedType] || [];
-}
-
-}
-
-// /* -------- DEBUG (TEMPORARY) -------- */
-// console.log("Tracked variables:", map);
-// console.log("Object:", object);
-// console.log("Detected type:", detectedType);
-// console.log("Methods:", methods);
-
-/* -------- RETURN SUGGESTIONS -------- */
-
-return methods.map(m => ({
-label: m,
-insertText: m + "()",
-kind: monaco.languages.CompletionItemKind.Method,
-range
-}));
+    /* -------- RETURN SUGGESTIONS -------- */
+    
+    const suggestions = [];
+    for (const m of methods) {
+        suggestions.push({
+            label: m,
+            detail: detectedType ? detectedType.charAt(0).toUpperCase() + detectedType.slice(1) + " method" : "Method",
+            insertText: m + "()",
+            kind: monaco.languages.CompletionItemKind.Method,
+            range: range
+        });
+    }
+    
+    return suggestions;
 
 }
 

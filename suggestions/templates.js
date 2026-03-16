@@ -1,16 +1,13 @@
 window.algorithmTemplates = {
 
-/* ---------------- C++ ---------------- */
+    /* ---------------- C++ ---------------- */
 
-cpp: [
-
-{
-label: "bfs",
-details: "Breadth-First Search",
-
-insertText:
-`queue<int> q;
-vector<bool> visited(n,false);
+    cpp: [
+        {
+            label: "bfs",
+            detail: "Breadth-First Search",
+            insertText: `queue<int> q;
+vector<bool> visited(n, false);
 
 q.push(\${1:start});
 visited[\${1:start}] = true;
@@ -26,13 +23,11 @@ while(!q.empty()){
         }
     }
 }`
-},
-
-{
-label: "dfs",
-details: "Depth-First Search",
-insertText:
-`void dfs(int node){
+        },
+        {
+            label: "dfs",
+            detail: "Depth-First Search",
+            insertText: `void dfs(int node){
     visited[node] = true;
 
     for(auto next : adj[node]){
@@ -41,16 +36,14 @@ insertText:
         }
     }
 }`
-},
-
-{
-label: "binarysearch",
-details: "Binary Search",
-insertText:
-`int l = 0, r = n-1;
+        },
+        {
+            label: "binarysearch",
+            detail: "Binary Search",
+            insertText: `int l = 0, r = n - 1;
 
 while(l <= r){
-    int mid = l + (r-l)/2;
+    int mid = l + (r - l) / 2;
 
     if(arr[mid] == target){
         return mid;
@@ -62,13 +55,13 @@ while(l <= r){
         r = mid - 1;
     }
 }`
-},
+        },
 
-{
-label: "slidingwindow",
-details: "Sliding Window",
-insertText:
-`int l = 0;
+        {
+            label: "slidingwindow",
+            detail: "Sliding Window",
+            insertText:
+                `int l = 0;
 int sum = 0;
 
 for(int r = 0; r < n; r++){
@@ -81,13 +74,13 @@ for(int r = 0; r < n; r++){
     }
 
 }`
-},
+        },
 
-{
-label: "twopointers",
-details: "Two Pointers",
-insertText:
-`int l = 0, r = n-1;
+        {
+            label: "twopointers",
+            detail: "Two Pointers",
+            insertText:
+                `int l = 0, r = n-1;
 
 while(l < r){
 
@@ -98,20 +91,20 @@ while(l < r){
     }
 
 }`
-}
+        }
 
-],
+    ],
 
 
-/* ---------------- PYTHON ---------------- */
+    /* ---------------- PYTHON ---------------- */
 
-python: [
+    python: [
 
-{
-label: "bfs",
-details: "Breadth-First Search",
-insertText:
-`from collections import deque
+        {
+            label: "bfs",
+            detail: "Breadth-First Search",
+            insertText:
+                `from collections import deque
 
 q = deque([\${1:start}])
 visited = set([\${1:start}])
@@ -123,25 +116,25 @@ while q:
         if nxt not in visited:
             visited.add(nxt)
             q.append(nxt)`
-},
+        },
 
-{
-label: "dfs",
-details: "Depth-First Search",
-insertText:
-`def dfs(node):
+        {
+            label: "dfs",
+            detail: "Depth-First Search",
+            insertText:
+                `def dfs(node):
     visited.add(node)
 
     for nxt in adj[node]:
         if nxt not in visited:
             dfs(nxt)`
-},
+        },
 
-{
-label: "binarysearch",
-details: "Binary Search",
-insertText:
-`l, r = 0, len(arr) - 1
+        {
+            label: "binarysearch",
+            detail: "Binary Search",
+            insertText:
+                `l, r = 0, len(arr) - 1
 
 while l <= r:
     mid = (l + r) // 2
@@ -153,13 +146,13 @@ while l <= r:
         l = mid + 1
     else:
         r = mid - 1`
-},
+        },
 
-{
-label: "slidingwindow",
-details: "Sliding Window",
-insertText:
-`l = 0
+        {
+            label: "slidingwindow",
+            detail: "Sliding Window",
+            insertText:
+                `l = 0
 curr_sum = 0
 
 for r in range(len(arr)):
@@ -169,13 +162,13 @@ for r in range(len(arr)):
     while curr_sum > target:
         curr_sum -= arr[l]
         l += 1`
-},
+        },
 
-{
-label: "twopointers",
-details: "Two Pointers",
-insertText:
-`l, r = 0, len(arr) - 1
+        {
+            label: "twopointers",
+            detail: "Two Pointers",
+            insertText:
+                `l, r = 0, len(arr) - 1
 
 while l < r:
 
@@ -183,20 +176,20 @@ while l < r:
         l += 1
     else:
         r -= 1`
-}
+        }
 
-],
+    ],
 
 
-/* ---------------- JAVA ---------------- */
+    /* ---------------- JAVA ---------------- */
 
-java: [
+    java: [
 
-{
-label: "bfs",
-details: "Breadth-First Search",
-insertText:
-`Queue<Integer> q = new LinkedList<>();
+        {
+            label: "bfs",
+            detail: "Breadth-First Search",
+            insertText:
+                `Queue<Integer> q = new LinkedList<>();
 boolean[] visited = new boolean[n];
 
 q.add(\${1:start});
@@ -216,13 +209,13 @@ while(!q.isEmpty()){
     }
 
 }`
-},
+        },
 
-{
-label: "dfs",
-details: "Depth-First Search",  
-insertText:
-`void dfs(int node){
+        {
+            label: "dfs",
+            detail: "Depth-First Search",
+            insertText:
+                `void dfs(int node){
 
     visited[node] = true;
 
@@ -235,13 +228,13 @@ insertText:
     }
 
 }`
-},
+        },
 
-{
-label: "binarysearch",
-details: "Binary Search",
-insertText:
-`int l = 0, r = arr.length - 1;
+        {
+            label: "binarysearch",
+            detail: "Binary Search",
+            insertText:
+                `int l = 0, r = arr.length - 1;
 
 while(l <= r){
 
@@ -258,13 +251,13 @@ while(l <= r){
     }
 
 }`
-},
+        },
 
-{
-label: "slidingwindow",
-details: "Sliding Window",
-insertText:
-`int l = 0;
+        {
+            label: "slidingwindow",
+            detail: "Sliding Window",
+            insertText:
+                `int l = 0;
 int sum = 0;
 
 for(int r = 0; r < arr.length; r++){
@@ -277,13 +270,13 @@ for(int r = 0; r < arr.length; r++){
     }
 
 }`
-},
+        },
 
-{
-label: "twopointers",
-details: "Two Pointers",
-insertText:
-`int l = 0, r = arr.length - 1;
+        {
+            label: "twopointers",
+            detail: "Two Pointers",
+            insertText:
+                `int l = 0, r = arr.length - 1;
 
 while(l < r){
 
@@ -294,9 +287,9 @@ while(l < r){
     }
 
 }`
-}
+        }
 
-]
+    ]
 
 };
 window.cppSnippets = [

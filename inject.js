@@ -16,8 +16,6 @@ waitForMonaco(initExtension)
 
 function initExtension() {
 
-    console.log("LeetCode IntelliSense initialized");
-
     registerProvider();
     enableSuggestions();
 
@@ -34,41 +32,37 @@ function registerProvider() {
 
         provideCompletionItems(model, position) {
 
-            const triggerChars = [";", "=", "{", "}"];
+            try {
+                const language = model.getLanguageId();
+                const word = model.getWordUntilPosition(position);
 
-            const line = model.getLineContent(position.lineNumber);
+                const range = {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: position.lineNumber,
+                    startColumn: word.startColumn,
+                    endColumn: word.endColumn
+                };
 
-            if (triggerChars.some(c => line.includes(c))) {
-                updateVariableTypes(model);
+                // Check if we're after a dot (method call context)
+                const dotContext = detectDotContext(model, position);
+                
+                let suggestions = [];
+                
+                if (dotContext) {
+                    // Always scan variables when looking for methods
+                    updateVariableTypes(model);
+                    const methods = getMethodSuggestions(dotContext, range, language);
+                    if (methods.length > 0) {
+                        suggestions = methods;
+                    }
+                } else {
+                    suggestions = getSuggestions(range, model, position, language);
+                }
+
+                return { suggestions };
+            } catch (e) {
+                return { suggestions: [] };
             }
-
-            const language = model.getLanguageId();
-
-            const word = model.getWordUntilPosition(position);
-
-            const range = {
-                startLineNumber: position.lineNumber,
-                endLineNumber: position.lineNumber,
-                startColumn: word.startColumn,
-                endColumn: word.endColumn
-            };
-
-            // Check if we're after a dot (method call context)
-            const dotContext = detectDotContext(model, position);
-            
-            let suggestions = [];
-            
-            if (dotContext) {
-                // User typed: variable.
-                // Update variable types before getting methods
-                updateVariableTypes(model);
-                suggestions = getMethodSuggestions(dotContext, range, language);
-            } else {
-                // User typing: keyword or snippet
-                suggestions = getSuggestions(range, model, position, language);
-            }
-
-            return { suggestions };
 
         }
 
