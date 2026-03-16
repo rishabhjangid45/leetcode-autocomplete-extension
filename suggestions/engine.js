@@ -177,6 +177,11 @@ function detectDotContext(model, position) {
 
     if (!match) return null;
 
+    const candidate = match[1].toLowerCase();
+    // Skip known non-container globals
+    const skipGlobals = ['cout', 'cin', 'cerr', 'clog', 'printf', 'scanf', 'endl', 'this'];
+    if (skipGlobals.includes(candidate)) return null;
+
     return {
         object: match[1].toLowerCase(),
         lineContext: fullLine

@@ -27,4 +27,4 @@ JAVA: List<Integer> list = new ArrayList<>(); list. → add, get, size
 
 ### Step 6: Verify + attempt_completion
 
-Progress: 5/6 completed (All code changes implemented: enhanced tracker + fallback inference)
+Progress: 6/6 completed ✅ (Fixed wrong token triggers - skip cout/cin + known non-containers)
