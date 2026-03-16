@@ -52,9 +52,7 @@ function registerProvider() {
                     // Always scan variables when looking for methods
                     updateVariableTypes(model);
                     const methods = getMethodSuggestions(dotContext, range, language);
-                    if (methods.length > 0) {
-                        suggestions = methods;
-                    }
+                    suggestions = methods;
                 } else {
                     suggestions = getSuggestions(range, model, position, language);
                 }

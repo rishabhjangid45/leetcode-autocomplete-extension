@@ -154,6 +154,7 @@ function getSuggestions(range, model, position, language) {
 function detectDotContext(model, position) {
 
     const line = model.getLineContent(position.lineNumber);
+    const fullLine = line;  // Keep full line for context analysis
 
     // Don't suggest methods in comments
     if (line.trim().startsWith("//") || line.trim().startsWith("#")) {
@@ -176,38 +177,70 @@ function detectDotContext(model, position) {
 
     if (!match) return null;
 
-    return match[1].toLowerCase();
+    return {
+        object: match[1].toLowerCase(),
+        lineContext: fullLine
+    };
 }
 
-function getMethodSuggestions(object, range, language) {
+function getTypeFromContext(object, lineContext, language) {
+    const lineLower = lineContext.toLowerCase();
+    const objectLower = object.toLowerCase();
+    
+    // Common LeetCode variable name heuristics
+    const commonArrayVars = ['nums', 'arr', 'data', 'nodes', 'intervals'];
+    if (commonArrayVars.includes(objectLower)) {
+        if (language === 'cpp' || language === 'c++') return 'vector';
+        if (language.includes('python')) return 'list';
+        if (language === 'java') return 'arraylist';
+    }
+    
+    // Scan line context backward for type keywords
+    const cppTypes = ['vector<', 'map<', 'set<', 'queue<', 'stack<', 'string'];
+    const pyTypes = ['list(', '[', 'dict(', 'set('];
+    const javaTypes = ['arraylist<', 'hashmap<', 'list<', 'string'];
+    
+    const types = language === 'cpp' || language === 'c++' ? cppTypes :
+                  language.includes('python') ? pyTypes : javaTypes;
+    
+    for (const type of types) {
+        if (lineLower.includes(type)) {
+            // Map to canonical type name
+            if (type === '[' || type === 'list(') return 'list';
+            if (type === 'vector<' || type === 'arraylist<') return language === 'java' ? 'arraylist' : 'vector';
+            if (type === 'map<' || type === 'dict(' || type === 'hashmap<') return language === 'java' ? 'hashmap' : 'map';
+            return type.replace(/[<\(]/, '');
+        }
+    }
+    
+    return null;
+}
 
-    object = object.trim().toLowerCase();
+function getMethodSuggestions(context, range, language) {
+    let object = typeof context === 'string' ? context.trim().toLowerCase() : context.object.toLowerCase();
+    const lineContext = typeof context === 'string' ? '' : context.lineContext;
 
     let detectedType = null;
     let methods = [];
 
-    /* -------- VARIABLE TYPE -------- */
-
+    /* -------- VARIABLE TYPE (tracked) -------- */
     if (window.variableTypes && window.variableTypes[object]) {
         detectedType = window.variableTypes[object];
+    } 
+    /* -------- FALLBACK: Context inference -------- */
+    else if (lineContext) {
+        detectedType = getTypeFromContext(object, lineContext, language);
     }
 
     /* -------- METHOD LOOKUP -------- */
-
     if (detectedType) {
-        if (language === "cpp" || language === "c++") {
-            methods = window.cppMethods[detectedType] || [];
-        }
-        else if (language.includes("python")) {
-            methods = window.pythonMethods[detectedType] || [];
-        }
-        else if (language === "java") {
-            methods = window.javaMethods[detectedType] || [];
-        }
+        const methodsMap = language === "cpp" || language === "c++" ? window.cppMethods :
+                          language.includes("python") ? window.pythonMethods :
+                          language === "java" ? window.javaMethods : {};
+        methods = methodsMap[detectedType] || [];
     }
 
     /* -------- RETURN SUGGESTIONS -------- */
-    
     const suggestions = [];
     for (const m of methods) {
         suggestions.push({
@@ -220,7 +253,6 @@ function getMethodSuggestions(object, range, language) {
     }
     
     return suggestions;
-
 }
 
 function removeDuplicates(list) {
